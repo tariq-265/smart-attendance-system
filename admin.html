@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+    }
+    .navbar {
+      background-color: #3b82f6;
+      color: white;
+      padding: 15px 30px;
+      font-size: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      gap: 20px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .tabs button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 10px 20px;
+      border-bottom: 2px solid transparent;
+    }
+    .tabs button.active {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+    .tab-content {
+      padding: 30px;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 5px 0;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      background: #fff;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .btn-small {
+      margin-left: 10px;
+      background: #e2e8f0;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .btn-small.delete {
+      background-color: #f87171;
+      color: white;
+    }
+    .qr-container {
+      margin-top: 20px;
+    }
+    .logout-btn {
+      background: #ef4444;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #welcome {
+      padding: 10px 30px;
+      font-size: 16px;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    Admin Dashboard
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+  <div id="welcome"></div>
+
+  <div class="tabs">
+    <button class="active" onclick="showTab(event, 'students')">Manage Users</button>
+    <button onclick="showTab(event, 'faculty')">Add Faculty</button>
+    <button onclick="showTab(event, 'qr')">Generate QR</button>
+    <button onclick="showTab(event, 'scanqr')">Scan QR</button>
+  </div>
+
+  <!-- Manage Students -->
+  <div id="students" class="tab-content active">
+    <h2>Manage Students/Employees</h2>
+    <div class="form-group">
+      <input type="text" id="studentName" placeholder="Name" />
+      <input type="text" id="studentID" placeholder="ID" />
+      <button onclick="addStudent()">Add Student</button>
+    </div>
+    <ul id="studentList"></ul>
+  </div>
+
+  <!-- Add Faculty -->
+  <div id="faculty" class="tab-content">
+    <h2>Add Faculty/Coordinators</h2>
+    <div class="form-group">
+      <input type="text" id="facultyName" placeholder="Faculty Name" />
+      <input type="text" id="facultyID" placeholder="Faculty ID" />
+      <select id="facultyRole">
+        <option value="">Select Role</option>
+        <option value="Faculty">Faculty</option>
+        <option value="Class Coordinator">Class Coordinator</option>
+      </select>
+      <button onclick="addFaculty()">Add Faculty</button>
+    </div>
+    <ul id="facultyList"></ul>
+  </div>
+
+  <!-- QR Code Generator -->
+  <div id="qr" class="tab-content">
+    <h2>Generate QR Code</h2>
+    <input type="text" id="qrInput" placeholder="Enter ID or Name" />
+    <button onclick="generateQR()">Generate</button>
+    <div id="qrcode" class="qr-container"></div>
+  </div>
+
+  <!-- QR Code Scanner -->
+  <div id="scanqr" class="tab-content">
+    <h2>Scan Student QR Code</h2>
+    <div id="reader" style="width:300px;"></div>
+    <div id="student-details" style="margin-top: 20px; background: #fff; padding: 15px; border-radius: 10px;"></div>
+  </div>
+
+  <script>
+    // Show welcome name
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    const welcome = document.getElementById("welcome");
+    if (user) {
+      welcome.textContent = `👋 Welcome, ${user.name.toUpperCase()} | Role: ${user.role.toUpperCase()}`;
+    }
+
+    // Tab switching
+    function showTab(event, id) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      event.target.classList.add('active');
+
+      if (id === "scanqr") {
+        startQRScanner(); // start scanner when scan tab is active
+      }
+    }
+
+    // Student Data
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    function addStudent() {
+      const name = document.getElementById("studentName").value;
+      const id = document.getElementById("studentID").value;
+      if (name && id) {
+        students.push({ name, id });
+        localStorage.setItem("students", JSON.stringify(students));
+        renderStudents();
+        document.getElementById("studentName").value = "";
+        document.getElementById("studentID").value = "";
+      }
+    }
+
+    function deleteStudent(index) {
+      students.splice(index, 1);
+      localStorage.setItem("students", JSON.stringify(students));
+      renderStudents();
+    }
+
+    function renderStudents() {
+      const list = document.getElementById("studentList");
+      list.innerHTML = "";
+      students.forEach((s, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `${s.name} (ID: ${s.id}) <button class="btn-small delete" onclick="deleteStudent(${i})">Delete</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    renderStudents();
+
+    // Faculty
+    let faculty = JSON.parse(localStorage.getItem("faculty")) || [];
+
+    function addFaculty() {
+      const name = document.getElementById("facultyName").value;
+      const id = document.getElementById("facultyID").value;
+      const role = document.getElementById("facultyRole").value;
+      if (name && id && role) {
+        faculty.push({ name, id, role });
+        localStorage.setItem("faculty", JSON.stringify(faculty));
+        renderFaculty();
+        document.getElementById("facultyName").value = "";
+        document.getElementById("facultyID").value = "";
+        document.getElementById("facultyRole").value = "";
+      }
+    }
+
+    function renderFaculty() {
+      const list = document.getElementById("facultyList");
+      list.innerHTML = "";
+      faculty.forEach((f) => {
+        const li = document.createElement("li");
+        li.textContent = `${f.name} (ID: ${f.id}) - ${f.role}`;
+        list.appendChild(li);
+      });
+    }
+
+    renderFaculty();
+
+    // QR Generator
+    function generateQR() {
+      const input = document.getElementById("qrInput").value;
+      const qr = document.getElementById("qrcode");
+      qr.innerHTML = "";
+      if (input) {
+        new QRCode(qr, {
+          text: input,
+          width: 150,
+          height: 150
+        });
+      }
+    }
+
+    // QR Scanner
+    let html5QrCode;
+    function startQRScanner() {
+      const qrRegion = document.getElementById("reader");
+      qrRegion.innerHTML = ""; // Clear if already exists
+      html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          const student = students.find(s => s.id === decodedText);
+          const detailBox = document.getElementById("student-details");
+          if (student) {
+            detailBox.innerHTML = `
+              <strong>Name:</strong> ${student.name}<br>
+              <strong>ID:</strong> ${student.id}<br>
+              <strong>Status:</strong> ✅ Student found!
+            `;
+          } else {
+            detailBox.innerHTML = `<span style="color:red;">❌ Student not found!</span>`;
+          }
+          html5QrCode.stop(); // Stop scanner after one scan
+        }
+      ).catch(err => {
+        document.getElementById("student-details").innerHTML =
+          `<span style="color:red;">Camera error: ${err}</span>`;
+      });
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>

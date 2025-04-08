@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Attendance System - Landing Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+    }
+
+    header {
+      padding: 30px 0;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    header h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .marquee {
+      background-color: #ffcc00;
+      color: #000;
+      font-weight: bold;
+      padding: 10px 0;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .marquee span {
+      display: inline-block;
+      animation: scrollText 15s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes scrollText {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .content {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .overview {
+      max-width: 800px;
+      margin: auto;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .benefits {
+      margin-top: 30px;
+      text-align: left;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .benefits ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .benefits li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .login-section {
+      margin-top: 50px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .login-btn {
+      background-color: #fff;
+      color: #2575fc;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-4px);
+      background-color: #f1f1f1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: rgba(0,0,0,0.2);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>C. BYREGOWDA INSTITUE OF TECHNOLOGY</h1>
+    <p>Seamless. Accurate. Hassle-free Attendance Management</p>
+  </header>
+
+  <div class="marquee">
+    <span>📢 Attendance deadline approaching! | Faculty training tomorrow at 10 AM | Welcome to our smart attendance platform! 📢</span>
+  </div>
+
+  <div class="content">
+    <div class="overview">
+      <h2>System Overview</h2>
+      <p>
+        Our Smart Attendance System is a web-based platform designed to simplify attendance tracking for schools, colleges, and training centers.
+        It provides real-time attendance marking, centralized records, and seamless access for Admins, Faculty, and Students.
+      </p>
+    </div>
+
+    <div class="benefits">
+      <h3>✨ Benefits:</h3>
+      <ul>
+        <li>✔️ Time-saving digital attendance marking</li>
+        <li>✔️ Role-based secure login (Admin, Faculty, Student)</li>
+        <li>✔️ Centralized access to records</li>
+        <li>✔️ No manual errors or proxy attendance</li>
+        <li>✔️ Easy export and report generation</li>
+      </ul>
+    </div>
+
+    <div class="login-section">
+      <button class="login-btn" onclick="location.href='login.html'">Login as Admin</button>
+      <button class="login-btn" onclick="location.href='login.html'">Login as Faculty</button>
+      <button class="login-btn" onclick="location.href='login.html'">Login as Student</button>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Smart Attendance System | All rights reserved
+  </footer>
+
+</body>
+</html>

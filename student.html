@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Daily Subject Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #6366f1, #3b82f6);
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      color: #111;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .form-group {
+      margin: 12px 0;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    select, input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .result {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .absent {
+      color: #dc2626;
+    }
+
+    .present {
+      color: #16a34a;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📚 Daily Attendance - 7 Subjects</h1>
+
+  <div class="form-container">
+    <div class="form-group">
+      <label for="date">Select Date:</label>
+      <input type="date" id="date" />
+    </div>
+
+    <div id="subjects"></div>
+
+    <button onclick="saveAttendance()">Save Attendance</button>
+
+    <div class="result" id="resultSummary"></div>
+  </div>
+
+  <script>
+    const subjects = ["Math", "Physics", "POP", "IME", "English", "IDT", "RES", "IC"];
+    const container = document.getElementById("subjects");
+
+    subjects.forEach((subject, i) => {
+      container.innerHTML += `
+        <div class="form-group">
+          <label>${i + 1}. ${subject}:</label>
+          <select id="subject${i}">
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+          </select>
+        </div>
+      `;
+    });
+
+    function saveAttendance() {
+      const date = document.getElementById("date").value;
+      if (!date) {
+        alert("Please select a date!");
+        return;
+      }
+
+      const attendance = subjects.map((_, i) => {
+        return document.getElementById(`subject${i}`).value;
+      });
+
+      // Count
+      const presentCount = attendance.filter(v => v === "present").length;
+      const absentCount = subjects.length - presentCount;
+      const percent = ((presentCount / subjects.length) * 100).toFixed(2);
+
+      // Save to localStorage
+      let data = JSON.parse(localStorage.getItem("dailyAttendance")) || {};
+      data[date] = attendance;
+      localStorage.setItem("dailyAttendance", JSON.stringify(data));
+
+      document.getElementById("resultSummary").innerHTML = `
+        ✅ Present: <span class="present">${presentCount}</span> |
+        ❌ Absent: <span class="absent">${absentCount}</span><br>
+        📊 Percentage: <strong>${percent}%</strong>
+      `;
+    }
+  </script>
+
+</body>
+</html>

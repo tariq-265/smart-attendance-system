@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Attendance System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      animation: popIn 0.5s ease forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #444;
+      font-weight: 600;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .error-message {
+      color: #e63946;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+      height: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Login to Attendance System</h2>
+    <form onsubmit="login(event)">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter your username" required />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required />
+      </div>
+
+      <div class="input-group">
+        <label for="role">Select Role</label>
+        <select id="role" required>
+          <option value="admin">Admin</option>
+          <option value="student">Student</option>
+        </select>
+      </div>
+
+      <button type="submit">Login</button>
+      <div class="error-message" id="error-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    function login(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      const errorMsg = document.getElementById('error-msg');
+  
+      // Save to localStorage (name + role)
+      localStorage.setItem("loggedInUser", JSON.stringify({
+        name: username,
+        role: role
+      }));
+  
+      if (role === 'admin' && username === 'admin' && password === 'admin123') {
+        window.location.href = 'admin.html';
+      } else if (role === 'faculty' && username === 'faculty' && password === 'faculty123') {
+        window.location.href = 'faculty.html';
+      } else if (role === 'student' && username === 'student' && password === 'student123') {
+        window.location.href = 'student.html';
+      } else {
+        errorMsg.textContent = 'Invalid username or password!';
+      }
+    }
+  </script>
+  
+</body>
+</html>
+
